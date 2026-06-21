@@ -29,6 +29,18 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
 
+  /* ══ AUTH GATE ══ */
+  #authGate { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display: flex; align-items: center; justify-content: center; }
+  #authGate.hidden { display: none; }
+  .auth-box { background: #ffffff; border-radius: 12px; padding: 40px 36px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .auth-box h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 900; color: #1a73e8; letter-spacing: 2px; margin-bottom: 4px; }
+  .auth-box p { font-size: 11px; color: #6b7280; margin-bottom: 24px; }
+  .auth-box input { width: 100%; padding: 12px 14px; border: 1px solid #d4d4dc; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 14px; outline: none; transition: border-color .2s; min-height: 44px; }
+  .auth-box input:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,.12); }
+  .auth-box button { width: 100%; margin-top: 12px; padding: 12px; background: #1a73e8; color: #fff; border: none; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .2s; min-height: 44px; letter-spacing: 1px; text-transform: uppercase; }
+  .auth-box button:hover { background: #1557b0; }
+  .auth-err { color: #dc2626; font-size: 11px; margin-top: 10px; min-height: 16px; }
+
   /* ══ HEADER ══ */
   .hdr { background: linear-gradient(135deg, #ffffff 0%, #f0f0f4 50%, #ffffff 100%); border-bottom: 1px solid var(--border); padding: 24px 36px 18px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
   .hdr-top { display: flex; justify-content: space-between; align-items: flex-end; }
@@ -143,7 +155,7 @@
   .lu-tbc { font-size: 11px; color: var(--muted); font-style: italic; padding: 6px 0; }
 
   /* ══ PITCH DIAGRAM ══ */
-  .pitch-wrap { position: relative; }
+  .pitch-wrap { position: relative; width: 65%; margin: 0 auto; }
   .pitch-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .pitch-hdr .team-name { font-size: 12px; font-weight: 600; }
   .pitch-hdr .formation { font-size: 11px; color: var(--accent); font-weight: 500; }
@@ -232,20 +244,21 @@
     .mg { grid-template-columns: repeat(3, 1fr); }
   }
 
-  /* ══ RESPONSIVE: MOBILE ══ */
-  @media (max-width: 600px) {
-    body { font-size: 14px; }
+  /* ══ RESPONSIVE: MOBILE (≤768px) ══ */
+  @media (max-width: 768px) {
+    html { overflow-x: hidden; }
+    body { font-size: 14px; overflow-x: hidden; }
     .g2, .g3, .g4 { grid-template-columns: 1fr; }
 
     /* Header */
     .hdr { padding: 12px 14px 10px; }
     .hdr-title { font-size: 18px; letter-spacing: 1px; }
     .hdr-sub { font-size: 10px; }
-    .hdr-meta { display: none; } /* Hide model tag on mobile to save space */
+    .hdr-meta { display: none; }
 
-    /* Nav: horizontal scroll, larger touch targets */
+    /* Nav: horizontal scroll, 44px touch targets */
     .nav { padding: 0 10px; -webkit-overflow-scrolling: touch; }
-    .nav-tab { padding: 13px 14px; font-size: 12px; min-width: 60px; text-align: center; }
+    .nav-tab { padding: 13px 14px; font-size: 12px; min-width: 60px; min-height: 44px; text-align: center; display: flex; align-items: center; justify-content: center; }
 
     /* Main content */
     .main { padding: 10px; }
@@ -263,17 +276,19 @@
     .pc .xg { font-size: 22px; gap: 20px; }
     .pc .mr { flex-direction: column; gap: 4px; text-align: center; }
 
-    /* Markets grid: 2 columns on mobile */
+    /* Markets grid: 2 columns */
     .mg { grid-template-columns: 1fr 1fr; gap: 5px; }
-    .mc { padding: 8px 6px; }
+    .mc { padding: 8px 6px; min-height: 44px; display: flex; flex-direction: column; justify-content: center; }
     .mc .mv { font-size: 14px; }
 
     /* 0-0 + corners: single column */
+    .g2 { grid-template-columns: 1fr; }
     .nnb, .cb { padding: 10px; }
     .nnb .np { font-size: 15px; }
 
-    /* Lineup grid: single column on mobile */
+    /* Lineup grid: single column, pitches stack */
     .lu-g { grid-template-columns: 1fr; gap: 8px; }
+    .pitch-wrap { width: 80%; max-width: 260px; }
 
     /* Tables: horizontal scroll */
     .st, .ht, .mtx { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
@@ -291,26 +306,80 @@
     .si { padding: 8px; }
     .ss { flex-wrap: wrap; gap: 8px; }
 
-    /* Form dots slightly bigger for touch */
+    /* Form dots: touch-friendly */
     .fi { width: 17px; height: 17px; font-size: 9px; }
 
     /* Search bar full width */
-    .srch { max-width: 100%; }
+    .srch { max-width: 100%; min-height: 44px; font-size: 14px; }
 
-    /* Best plays */
-    .bp { padding: 6px 8px; font-size: 12px; }
+    /* Best plays: touch-friendly */
+    .bp { padding: 8px 10px; font-size: 12px; min-height: 44px; display: flex; align-items: center; }
 
     /* Rating bars */
     .rb-v { font-size: 12px; }
     .rb-l { font-size: 11px; }
 
-    /* Tags slightly larger for readability */
+    /* Tags slightly larger */
     .tag { font-size: 10px; padding: 3px 8px; }
+
+    /* Collapsible headers: touch-friendly */
+    .coll-t { min-height: 44px; display: flex; align-items: center; }
+  }
+
+  /* ══ RESPONSIVE: NARROW PHONE (≤480px) ══ */
+  @media (max-width: 480px) {
+    body { font-size: 15px; }
+
+    /* Tighter padding */
+    .hdr { padding: 10px 10px 8px; }
+    .hdr-title { font-size: 16px; letter-spacing: 0.5px; }
+    .main { padding: 8px; }
+
+    /* Nav: smaller text, still 44px targets */
+    .nav { padding: 0 6px; gap: 0; }
+    .nav-tab { padding: 12px 10px; font-size: 11px; min-width: 50px; letter-spacing: 0; }
+
+    /* Cards tighter */
+    .card { padding: 10px; margin-bottom: 8px; }
+    .pc { padding: 10px; margin-bottom: 8px; }
+
+    /* xG smaller */
+    .pc .xg { font-size: 20px; gap: 16px; }
+    .pc .tn { font-size: 13px; }
+
+    /* Markets: full single column */
+    .mg { grid-template-columns: 1fr; gap: 4px; }
+
+    /* Pitch centered, smaller on narrow screens */
+    .pitch-wrap { width: 85%; max-width: 220px; }
+
+    /* Table font slightly smaller */
+    .st th, .st td, .ht th, .ht td { padding: 4px 6px; font-size: 10px; }
+
+    /* Power rankings tighter */
+    .pw { padding: 6px 4px; }
+    .pw-t { min-width: 80px; font-size: 11px; }
+
+    /* Bracket cards */
+    .bg { padding: 6px; }
   }
 </style>
 </head>
 <body>
 
+<div id="authGate">
+  <div class="auth-box">
+    <h1>B365</h1>
+    <p>World Cup 2026 Dashboard</p>
+    <form id="authForm">
+      <input type="password" id="authPw" placeholder="Enter password" autocomplete="off" autofocus>
+      <button type="submit">Unlock</button>
+      <div class="auth-err" id="authErr"></div>
+    </form>
+  </div>
+</div>
+
+<div id="dashWrap" style="display:none">
 <div class="hdr">
   <div class="hdr-top">
     <div>
@@ -343,6 +412,39 @@
   <div class="sec" id="sec-styles"><div class="sec-title">Style Classification & Interaction Matrix</div><div id="styleC"></div></div>
   <div class="sec" id="sec-bracket"><div class="sec-title">Bracket Projector</div><div id="bracketC"></div></div>
 </div>
+
+</div><!-- /dashWrap -->
+
+<script>
+// ═══ AUTH GATE ═══
+(function(){
+  const HASH='089ed5006b49b452811f145d74d08702dc3134344d4a44ef1b21f622d1a274f3';
+  const KEY='b365_wc_auth';
+  const gate=document.getElementById('authGate');
+  const wrap=document.getElementById('dashWrap');
+
+  if(localStorage.getItem(KEY)==='1'){
+    gate.classList.add('hidden');
+    wrap.style.display='';
+  }
+
+  document.getElementById('authForm').addEventListener('submit',async function(e){
+    e.preventDefault();
+    const pw=document.getElementById('authPw').value;
+    const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+    const hex=[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    if(hex===HASH){
+      localStorage.setItem(KEY,'1');
+      gate.classList.add('hidden');
+      wrap.style.display='';
+    } else {
+      document.getElementById('authErr').textContent='Incorrect password';
+      document.getElementById('authPw').value='';
+      document.getElementById('authPw').focus();
+    }
+  });
+})();
+</script>
 
 <script src="wc_dashboard_data.js"></script>
 <script>
