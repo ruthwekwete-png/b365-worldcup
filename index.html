@@ -472,8 +472,14 @@ function TC(id){const e=document.getElementById(id);if(e)e.classList.toggle('ope
 // ═══ INIT ═══
 function init(){
   if(typeof WC_DATA==='undefined'){document.getElementById('todayC').innerHTML='<div class="card" style="color:var(--red)">wc_dashboard_data.js not found. Run wc_dashboard_gen.py first.</div>';return;}
-  const g=WC_DATA.generated_at?new Date(WC_DATA.generated_at):null;
-  document.getElementById('lastUp').textContent=g?'Updated: '+g.toLocaleString():'';
+  // Show "Last Updated" in ET — use pre-formatted display string if available, else format from ISO
+  const gDisp=WC_DATA.generated_at_display;
+  if(gDisp){
+    document.getElementById('lastUp').textContent='Updated: '+gDisp;
+  } else {
+    const g=WC_DATA.generated_at?new Date(WC_DATA.generated_at):null;
+    document.getElementById('lastUp').textContent=g?'Updated: '+g.toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' ET':''
+  }
   document.getElementById('mTag').textContent=`${WC_DATA.model_version||'v4'} · ${WC_DATA.convergence_iterations||3} iter · ${WC_DATA.data_window||'2025-01-01'}+`;
   rToday();rMatches();rGroups();rTeams();rPower();rStyles();rBracket();
 }
@@ -493,8 +499,9 @@ function rToday(){
   if(todayResults.length){
     h+='<div style="margin-bottom:14px;font-size:12px;color:var(--muted)">RESULTS</div>';
     todayResults.forEach(m=>{
+      const rTime=m.time_et?`<span style="font-size:10px;color:var(--muted);margin-left:8px">${m.time_et} ET</span>`:'';
       h+=`<div class="card" style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:14px">${m.home} <strong style="color:var(--accent)">${m.home_goals}</strong> - <strong style="color:var(--accent)">${m.away_goals}</strong> ${m.away}</span>
+        <span style="font-size:14px">${m.home} <strong style="color:var(--accent)">${m.home_goals}</strong> - <strong style="color:var(--accent)">${m.away_goals}</strong> ${m.away}${rTime}</span>
         <span class="tag tag-a">FT</span>
       </div>`;
     });
@@ -518,7 +525,7 @@ function rMatches(){
   const byDate={};valid.forEach(p=>{const d=p.date||'Unknown';if(!byDate[d])byDate[d]=[];byDate[d].push(p);});
   let h='';
   Object.keys(byDate).sort().forEach(d=>{
-    h+=`<div style="margin-top:16px;margin-bottom:8px;font-size:12px;color:var(--accent)">${d}</div>`;
+    h+=`<div style="margin-top:16px;margin-bottom:8px;font-size:12px;color:var(--accent)">${d} <span style="font-size:9px;color:var(--muted)">(times in ET)</span></div>`;
     byDate[d].forEach(p=>{h+=BPC(p);});
   });
   c.innerHTML=h;
@@ -531,10 +538,11 @@ function BPC(p){
     m=p.markets||{},r=p.ratings||{},hr=r.home||{},ar=r.away||{},
     nn=p.nil_nil||{},ip=nn.independent?nn.independent.probability:nn.poisson,
     st=p.style_matchup||{},cn=p.corners||{};
+  const timeET=p.time_et?(' · '+p.time_et+' ET'):'';
   let h=`<div class="pc">`;
   // Top meta
   h+=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div style="font-size:10px;color:var(--muted)">${p.date} · MD ${p.matchday||'?'} · ${p.venue}</div>
+    <div style="font-size:10px;color:var(--muted)">${p.date}${timeET} · MD ${p.matchday||'?'} · ${p.venue}</div>
     <div style="display:flex;gap:6px;align-items:center">
       <span class="${tc}">${tm}</span>
       <span class="${SC(spl)}" style="font-size:11px">${spl}${spm?' → '+spm:''}</span>
