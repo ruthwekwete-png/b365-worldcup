@@ -526,24 +526,21 @@ function init(){
 // ═══ TODAY ═══
 function rToday(){
   const c=document.getElementById('todayC'),ps=WC_DATA.predictions||[],allM=WC_DATA.todays_matches||[];
-  // Use the BROWSER's current date in Eastern Time — never the stale WC_DATA.today
+  // Use the BROWSER's current date in Eastern Time — exact match, no yesterday
   const todayET=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});
   const todayLabel=new Date().toLocaleDateString('en-US',{timeZone:'America/New_York',weekday:'long',month:'short',day:'numeric'});
   document.getElementById('todayDesc').textContent=`Matches for ${todayLabel} (Eastern Time)`;
-  // Also include yesterday (for late-kickoff matches stored as next-day UTC)
-  const yd=new Date(Date.now()-86400000).toLocaleDateString('en-CA',{timeZone:'America/New_York'});
-  const tdDates=new Set([todayET,yd]);
   const liveStatuses=new Set(['1H','2H','HT','ET','BT','P','LIVE','INT']);
 
-  // Today's predictions: matches whose date is today/yesterday in ET
-  const tp=ps.filter(p=>tdDates.has(p.date)&&!p.error);
-  // Upcoming: everything else
-  const up=ps.filter(p=>!tdDates.has(p.date)&&!p.error);
+  // Today's predictions: exact date match only
+  const tp=ps.filter(p=>p.date===todayET&&!p.error);
+  // Upcoming: future dates only
+  const up=ps.filter(p=>p.date>todayET&&!p.error);
 
-  // Results: completed matches from today (from both todays_matches AND results arrays)
+  // Results: completed matches from today only
   const allResults=(WC_DATA.results||[]);
-  const todayResults=allResults.filter(m=>tdDates.has(m.date));
-  // Live matches: todays_matches + predictions with live status
+  const todayResults=allResults.filter(m=>m.date===todayET);
+  // Live matches: today's matches with live status
   const liveMatches=allM.filter(m=>liveStatuses.has(m.status));
 
   // Nothing at all today?
