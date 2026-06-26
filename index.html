@@ -266,6 +266,36 @@
   .qual-key { display:flex; gap:16px; font-size:11px; color:var(--muted); margin-bottom:18px; flex-wrap:wrap; font-weight:500; }
   .qual-key i { width:11px; height:11px; border-radius:4px; display:inline-block; margin-right:5px; vertical-align:-1px; }
 
+  /* ══════════ SCENARIOS ══════════ */
+  .scen-key { display:flex; gap:16px; font-size:11px; color:var(--muted); margin-bottom:18px; flex-wrap:wrap; font-weight:500; }
+  .scen-key i { width:11px; height:11px; border-radius:4px; display:inline-block; margin-right:5px; vertical-align:-1px; }
+  .scen-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow-sm); }
+  .scen-hd { display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface2); border-bottom:1px solid var(--border); }
+  .scen-hd .gl { width:28px; height:28px; display:flex; align-items:center; justify-content:center; background:var(--grad-pill); color:#fff; border-radius:8px; font-family:'Outfit'; font-weight:800; font-size:13px; }
+  .scen-hd .scen-title { font-family:'Outfit'; font-weight:700; font-size:14px; flex:1; }
+  .scen-hd .scen-badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:999px; text-transform:uppercase; letter-spacing:.5px; }
+  .scen-badge.sb-done { background:rgba(22,163,74,.1); color:var(--win); }
+  .scen-badge.sb-live { background:rgba(79,70,229,.1); color:var(--primary); }
+  .scen-team { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid var(--surface3); font-size:13px; transition:background .15s; }
+  .scen-team:last-child { border-bottom:none; }
+  .scen-team:hover { background:var(--surface2); }
+  .scen-ico { font-size:16px; width:22px; text-align:center; flex-shrink:0; }
+  .scen-name { font-family:'Outfit'; font-weight:700; min-width:100px; }
+  .scen-detail { flex:1; font-size:12px; color:var(--text); line-height:1.4; }
+  .scen-pct { font-family:'DM Mono'; font-size:11px; font-weight:600; min-width:42px; text-align:right; flex-shrink:0; }
+  .scen-pct.pct-hi { color:var(--win); }
+  .scen-pct.pct-md { color:var(--amber); }
+  .scen-pct.pct-lo { color:var(--rose); }
+  .scen-bar { width:50px; height:6px; background:var(--surface3); border-radius:3px; overflow:hidden; flex-shrink:0; }
+  .scen-bar-fill { height:100%; border-radius:3px; transition:width .5s; }
+  .scen-bar-fill.bf-hi { background:var(--win); }
+  .scen-bar-fill.bf-md { background:var(--amber); }
+  .scen-bar-fill.bf-lo { background:var(--rose); }
+  .scen-remaining { padding:10px 16px; background:var(--surface2); border-top:1px solid var(--border); }
+  .scen-remaining .scen-match { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); padding:3px 0; }
+  .scen-remaining .scen-match .scen-vs { font-weight:600; color:var(--text); }
+  .scen-remaining .scen-match .scen-today { background:var(--amber); color:#fff; padding:1px 6px; border-radius:999px; font-size:9px; font-weight:700; text-transform:uppercase; }
+
   /* ══════════ POWER RANKINGS ══════════ */
   .pw-head { display:flex; padding: 8px 14px; font-family:'Outfit'; font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; border-bottom:2px solid var(--border); }
   .pw { display:flex; align-items:center; gap:10px; padding: 10px 14px; border-bottom:1px solid var(--surface3); font-size:12px; transition: background .15s; }
@@ -413,6 +443,7 @@
     <div class="nav-tab active" data-tab="today"><span class="nt-ico">📅</span>Today</div>
     <div class="nav-tab" data-tab="matches"><span class="nt-ico">⚽</span>Matches</div>
     <div class="nav-tab" data-tab="groups"><span class="nt-ico">🏆</span>Groups</div>
+    <div class="nav-tab" data-tab="scenarios"><span class="nt-ico">🎯</span>Scenarios</div>
     <div class="nav-tab" data-tab="teams"><span class="nt-ico">🛡️</span>Teams</div>
     <div class="nav-tab" data-tab="rankings"><span class="nt-ico">📊</span>Rankings</div>
     <div class="nav-tab" data-tab="styles"><span class="nt-ico">🎯</span>Styles</div>
@@ -440,6 +471,17 @@
       <span>🏠 Host nation</span>
     </div>
     <div class="g3" id="groupsG"></div>
+  </div>
+  <div class="sec" id="sec-scenarios">
+    <div class="sec-title"><span class="dot"></span>Elimination Scenarios</div>
+    <div class="sec-desc">What each team needs to qualify. Updated live as results come in.</div>
+    <div class="scen-key">
+      <span><i style="background:var(--win)"></i>Qualified</span>
+      <span><i style="background:var(--amber)"></i>Can qualify</span>
+      <span><i style="background:var(--rose)"></i>Eliminated</span>
+      <span>⚡ Decisive today</span>
+    </div>
+    <div class="g3" id="scenG"></div>
   </div>
   <div class="sec" id="sec-teams">
     <div class="sec-title"><span class="dot"></span>Team Profiles</div>
@@ -520,7 +562,7 @@ function init(){
   if(gDisp){ document.getElementById('lastUp').textContent='Updated '+gDisp; }
   else { const g=WC_DATA.generated_at?new Date(WC_DATA.generated_at):null; document.getElementById('lastUp').textContent=g?'Updated '+g.toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' ET':''; }
   document.getElementById('mTag').textContent=`${WC_DATA.model_version||'v4'} · ${WC_DATA.convergence_iterations||3} iter · ${WC_DATA.data_window||'2025-01-01'}+`;
-  rToday();rMatches();rGroups();rTeams();rPower();rStyles();rBracket();
+  rToday();rMatches();rGroups();rScenarios();rTeams();rPower();rStyles();rBracket();
 }
 
 // ═══ TODAY ═══
@@ -799,6 +841,69 @@ function rGroups(){
     h+='</table></div>';
   });
   g.innerHTML=h;
+}
+
+// ═══ SCENARIOS ═══
+function rScenarios(){
+  const el=document.getElementById('scenG');
+  const sc=WC_DATA.scenarios;
+  if(!sc){el.innerHTML='<div class="empty"><div class="e-emoji">🔮</div>Scenario data not available. Regenerate dashboard.</div>';return;}
+
+  const groups=WC_DATA.groups||{};
+  let h='';
+
+  Object.keys(sc).sort().forEach(grp=>{
+    const gd=sc[grp];
+    const isDone=gd.status==='complete';
+    const badgeCls=isDone?'sb-done':'sb-live';
+    const badgeTxt=isDone?'Decided':'Live';
+    const hasToday=gd.remaining_matches.some(m=>m.is_today);
+
+    h+=`<div class="scen-card">`;
+    h+=`<div class="scen-hd"><span class="gl">${grp}</span><span class="scen-title">Group ${grp}</span>`;
+    h+=`<span class="scen-badge ${badgeCls}">${badgeTxt}</span>`;
+    if(hasToday)h+=`<span class="scen-badge sb-live" style="background:rgba(245,158,11,.15);color:#b45309">⚡ Today</span>`;
+    h+=`</div>`;
+
+    // Team rows — sort by standings order
+    const teamOrder=(groups[grp]||[]);
+    const teamList=teamOrder.length?teamOrder:Object.keys(gd.teams);
+
+    teamList.forEach(team=>{
+      const td=gd.teams[team];
+      if(!td)return;
+      const st=td.status;
+      const ico=st==='qualified'?'✅':st==='eliminated'?'❌':'🟡';
+      const qp=td.qualify_pct;
+      const pCls=qp>=75?'pct-hi':qp>=30?'pct-md':'pct-lo';
+      const bCls=qp>=75?'bf-hi':qp>=30?'bf-md':'bf-lo';
+      const pctLabel=st==='qualified'?'Q':st==='eliminated'?'—':qp+'%';
+
+      h+=`<div class="scen-team">`;
+      h+=`<span class="scen-ico">${ico}</span>`;
+      h+=`<span class="scen-name">${team}</span>`;
+      h+=`<span class="scen-detail">${td.detail}</span>`;
+      if(st==='can_qualify'){
+        h+=`<span class="scen-bar"><span class="scen-bar-fill ${bCls}" style="width:${qp}%"></span></span>`;
+      }
+      h+=`<span class="scen-pct ${pCls}">${pctLabel}</span>`;
+      h+=`</div>`;
+    });
+
+    // Remaining matches footer
+    if(gd.remaining_matches.length){
+      h+=`<div class="scen-remaining">`;
+      gd.remaining_matches.forEach(rm=>{
+        const todayTag=rm.is_today?`<span class="scen-today">Today</span>`:'';
+        h+=`<div class="scen-match">${todayTag}<span class="scen-vs">${rm.home} vs ${rm.away}</span><span>${rm.date}</span></div>`;
+      });
+      h+=`</div>`;
+    }
+
+    h+=`</div>`;
+  });
+
+  el.innerHTML=h;
 }
 
 // ═══ TEAMS ═══
