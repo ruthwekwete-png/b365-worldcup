@@ -235,6 +235,8 @@
   .r-W { color: var(--win); font-weight: 800; }
   .r-D { color: #b45309; font-weight: 800; }
   .r-L { color: var(--loss); font-weight: 800; }
+  .g-for { color: var(--win); font-weight: 700; }
+  .g-against { color: var(--loss); font-weight: 600; opacity: 0.85; }
 
   /* ══════════ RATING BARS ══════════ */
   .rb { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
@@ -936,8 +938,8 @@ function BTC(t,matches,corners){
   if(corners.data_available){h+=`<div style="margin-top:8px;font-size:11px;color:var(--muted)">Corners avg <b class="def-c">${corners.avg_total}</b> · O9.5 ${PI(corners.over_95)} · O10.5 ${PI(corners.over_105)}</div>`;}
   if(matches.length){
     const hid='h-'+t.team.replace(/\s+/g,'-');
-    h+=`<div class="coll-t" onclick="TC('${hid}')">▸ Last ${matches.length} matches</div><div class="coll-c" id="${hid}"><table class="ht"><tr><th>Date</th><th>Opp</th><th>R</th><th>Score</th><th>Goals</th><th>Tier</th><th>Crn</th></tr>`;
-    matches.forEach(m=>{const gm=m.goal_minutes||[];const gs=gm.length?gm.map(g=>g.display).join(', '):'—';h+=`<tr><td>${m.date}</td><td>${m.opponent}</td><td class="r-${m.result}">${m.result}</td><td>${m.score}</td><td style="font-size:9px;color:var(--muted)">${gs}</td><td>${TT(m.tier)}</td><td>${m.corners!=null?m.corners:'-'}</td></tr>`;});
+    h+=`<div class="coll-t" onclick="TC('${hid}')">▸ Last ${matches.length} matches</div><div class="coll-c" id="${hid}"><table class="ht"><tr><th>Date</th><th>Opp</th><th>R</th><th>Score</th><th><span class="g-for">Scored</span> / <span class="g-against">Conceded</span></th><th>Tier</th><th>Crn</th></tr>`;
+    matches.forEach(m=>{const gm=m.goal_minutes||[];const gs=gm.length?gm.map(g=>`<span class="g-${g.side||'for'}">${g.display}</span>`).join(' '):'—';h+=`<tr><td>${m.date}</td><td>${m.opponent}</td><td class="r-${m.result}">${m.result}</td><td>${m.score}</td><td style="font-size:9px">${gs}</td><td>${TT(m.tier)}</td><td>${m.corners!=null?m.corners:'-'}</td></tr>`;});
     h+='</table></div>';
   }
   h+='</div>';return h;
