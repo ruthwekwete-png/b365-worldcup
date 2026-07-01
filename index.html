@@ -703,8 +703,8 @@ function BPC(p){
   // 0-0 + Corners
   h+='<div class="g2">';
   h+=`<div class="info-box nnb"><div class="ib-t">0-0 Draw (CS method)</div><div class="ib-v">${ip?P(ip):'?'} <span style="font-size:12px;color:var(--muted);font-family:'DM Mono'">${ip?O(ip):''}</span></div><div class="ib-d">Poisson: ${nn.poisson?P(nn.poisson):'?'}</div><div class="ib-d">${hr.clean_sheet?p.home+' CS '+PI(hr.clean_sheet):''}${hr.clean_sheet&&ar.clean_sheet?' · ':''}${ar.clean_sheet?p.away+' CS '+PI(ar.clean_sheet):''}</div></div>`;
-  h+='<div class="info-box cb"><div class="ib-t">Corner analysis</div>';
-  if(cn.data_available){h+=`<div class="ib-v">${cn.expected_total} expected</div><div class="ib-d">${p.home}: ${cn.home_avg} · ${p.away}: ${cn.away_avg}</div><div class="ib-d">Combined O9.5: ${cn.combined_over_95?PI(cn.combined_over_95):'?'}</div>`;}
+  h+='<div class="info-box cb"><div class="ib-t">Corner projection</div>';
+  if(cn.data_available){h+=`<div class="ib-v">${cn.projected_total} projected</div><div class="ib-d" style="display:flex;justify-content:space-between"><span>${p.home}: <b>${cn.home_projected}</b></span><span>${p.away}: <b>${cn.away_projected}</b></span></div><div class="ib-d" style="font-size:10px;margin-top:4px"><span title="Corners won / conceded per match">${p.home} avg: ${cn.home_avg_won} won · ${cn.home_avg_conceded} conc</span></div><div class="ib-d" style="font-size:10px"><span title="Corners won / conceded per match">${p.away} avg: ${cn.away_avg_won} won · ${cn.away_avg_conceded} conc</span></div>`;}
   else{h+='<div style="color:var(--muted);font-size:12px">Corner data unavailable</div>';}
   h+='</div></div>';
   // Style
@@ -935,7 +935,7 @@ function BTC(t,matches,corners){
     Object.entries(t.tier_ratings).forEach(([k,v])=>{h+=`<span>${TT(parseInt(k))} A${v.atk} D${v.def} (${v.n}m)${v.blended?'*':''}</span>`;});
     h+='</div>';
   }
-  if(corners.data_available){h+=`<div style="margin-top:8px;font-size:11px;color:var(--muted)">Corners avg <b class="def-c">${corners.avg_total}</b> · O9.5 ${PI(corners.over_95)} · O10.5 ${PI(corners.over_105)}</div>`;}
+  if(corners.data_available){h+=`<div style="margin-top:8px;font-size:11px;color:var(--muted)">Corners: <b class="atk-c">${corners.avg_won} won</b> · <b class="def-c">${corners.avg_conceded} conc</b> · Total ${corners.avg_total} · O9.5 ${PI(corners.over_95)} · O10.5 ${PI(corners.over_105)}</div>`;}
   if(matches.length){
     const hid='h-'+t.team.replace(/\s+/g,'-');
     h+=`<div class="coll-t" onclick="TC('${hid}')">▸ Last ${matches.length} matches</div><div class="coll-c" id="${hid}"><table class="ht"><tr><th>Date</th><th>Opp</th><th>R</th><th>Score</th><th><span class="g-for">Scored</span> / <span class="g-against">Conceded</span></th><th>Tier</th><th>Crn</th></tr>`;
